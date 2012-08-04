@@ -20,3 +20,7 @@ hfs
 -cpdirSync 目录对拷,可以跨分区拷贝
 
 上面都有对应的同步化版本，源码里面更详细的说明与简单的示例，它是拆自我的另一个项目newland
+
+安装 $ npm install mass_hfs
+
+被人占用hfs了……

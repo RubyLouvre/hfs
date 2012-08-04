@@ -9,6 +9,7 @@
 	var fs = require("fs");
 	var path = require("path")
 	var $ = $ || {}
+	console.log("已安装mass_hfs")
 	$.mix = function( receiver, supplier ){
         var args = Array.apply([], arguments ),i = 1, key,//如果最后参数是布尔，判定是否覆写同名属性
         ride = typeof args[args.length - 1] == "boolean" ? args.pop() : true;
