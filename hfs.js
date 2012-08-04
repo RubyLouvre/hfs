@@ -27,6 +27,7 @@
         return receiver;
     };
     $.mix( {
+	    noop: function(){},
         //遍历文件树,收集目录与文件,并包含自身
         //p为路径，
         //cb为最终回调，它将接受两个参数files, dirs，所有文件列表与所有目录列表
@@ -88,6 +89,7 @@
                     }
                 });
             }
+			//这里才是函数的主体
             return function( p, cb, opts ){
                 if(typeof cb == "object"){
                     opts = cb
@@ -106,7 +108,7 @@
                 }
             }
         },
-        //删除文件或目录,如果里面有东西,也一并清空,这是同步化版本
+        //删除文件或目录,如果里面有东西,也一并清空
         delSync: function(p, cb){
             $.walk(p, {
                 cb: function( files, dirs ){
@@ -318,7 +320,7 @@
                 }
             }
             return function(old, neo, cb){//把当前目录里面的东西拷贝到新目录下（不存在就创建）
-                cb = typeof cb == "function" ? cb : $.noop
+                cb = typeof cb == "function" ? cb : $.noop；
                 old = path.resolve(process.cwd(), old);
                 neo = path.resolve(process.cwd(), neo);//允许拷贝到另一个分区中
                 $.mkdir(neo, function(){
@@ -384,7 +386,7 @@
     //            console.log("删除文件与目录，包括自身")
     //        });
     //        break;
-    //    case 4:
+    //    case 4://copy 
     //        console.log( path.resolve(process.cwd(), "E:\\aaa.js") +"!" )
     //        fs.writeFileSync("E:\\aaa.js","alert(1)");
     //        cp("helpers.js","neer/ee.txt",function(){
