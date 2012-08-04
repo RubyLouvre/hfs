@@ -1,22 +1,23 @@
-//height level file system
-//¸ß¼¶ÎÄ¼şÏµÍ³²Ù×÷API
-//by Ë¾Í½ÕıÃÀ 
-//Î¢²© http://weibo.com/jslouvre 
-//²©¿Í http://www.cnblogs.com/rubylouvre/
-//³éÈ¡×ÔÎÒÁíÒ»¸öÏîÄ¿ÖĞµÄÒ»¸öÄ£¿é https://github.com/RubyLouvre/newland/blob/master/system/hfs.js
-    // console.log("ÒÑ¼ÓÔØÁËhfsÄ£¿é")
+ï»¿//height level file system
+//é«˜çº§æ–‡ä»¶ç³»ç»Ÿæ“ä½œAPI
+//by å¸å¾’æ­£ç¾ 
+//å¾®åš http://weibo.com/jslouvre 
+//åšå®¢ http://www.cnblogs.com/rubylouvre/
+//æŠ½å–è‡ªæˆ‘å¦ä¸€ä¸ªé¡¹ç›®ä¸­çš„ä¸€ä¸ªæ¨¡å— https://github.com/RubyLouvre/newland/blob/master/system/hfs.js
+//æ¬¢è¿æŒ‡æ­£ä¸ä½¿ç”¨ï¼
+    // console.log("å·²åŠ è½½äº†hfsæ¨¡å—")
 	var fs = require("fs");
 	var path = require("path")
 	var $ = $ || {}
 	$.mix = function( receiver, supplier ){
-        var args = Array.apply([], arguments ),i = 1, key,//Èç¹û×îºó²ÎÊıÊÇ²¼¶û£¬ÅĞ¶¨ÊÇ·ñ¸²Ğ´Í¬ÃûÊôĞÔ
+        var args = Array.apply([], arguments ),i = 1, key,//å¦‚æœæœ€åå‚æ•°æ˜¯å¸ƒå°”ï¼Œåˆ¤å®šæ˜¯å¦è¦†å†™åŒåå±æ€§
         ride = typeof args[args.length - 1] == "boolean" ? args.pop() : true;
-        if(args.length === 1){//´¦Àí$.mix(hash)µÄÇéĞÎ
+        if(args.length === 1){//å¤„ç†$.mix(hash)çš„æƒ…å½¢
             receiver = !this.window ? this : {} ;
             i = 0;
         }
         while((supplier = args[i++])){
-            for ( key in supplier ) {//ÔÊĞí¶ÔÏóôÛÔÓ£¬ÓÃ»§±£Ö¤¶¼ÊÇ¶ÔÏó
+            for ( key in supplier ) {//å…è®¸å¯¹è±¡ç³…æ‚ï¼Œç”¨æˆ·ä¿è¯éƒ½æ˜¯å¯¹è±¡
                 if (supplier.hasOwnProperty(key) && (ride || !(key in receiver))) {
                     receiver[ key ] = supplier[ key ];
                 }
@@ -25,13 +26,13 @@
         return receiver;
     };
     $.mix( {
-        //±éÀúÎÄ¼şÊ÷,ÊÕ¼¯Ä¿Â¼ÓëÎÄ¼ş,²¢°üº¬×ÔÉí
-        //pÎªÂ·¾¶£¬
-        //cbÎª×îÖÕ»Øµ÷£¬Ëü½«½ÓÊÜÁ½¸ö²ÎÊıfiles, dirs£¬ËùÓĞÎÄ¼şÁĞ±íÓëËùÓĞÄ¿Â¼ÁĞ±í
-        //optsÎª¿ÉÑ¡µÄÅäÖÃ¶ÔÏó£¬ÀïÃæ²ÎÊı£º
-        //sync  ±íÊ¾ÊÇ·ñÍ¬²½£¬
-        //one   ±íÊ¾ÊÇ·ñÕÒµ½Ò»¸ö¾ÍÖÕÓÚ±éÀú
-        //filter±íÊ¾¹ıÂËº¯Êı£¬Èç¹ûº¯Êı·µ»ØtrueÔòÊÕÂ¼
+        //éå†æ–‡ä»¶æ ‘,æ”¶é›†ç›®å½•ä¸æ–‡ä»¶,å¹¶åŒ…å«è‡ªèº«
+        //pä¸ºè·¯å¾„ï¼Œ
+        //cbä¸ºæœ€ç»ˆå›è°ƒï¼Œå®ƒå°†æ¥å—ä¸¤ä¸ªå‚æ•°files, dirsï¼Œæ‰€æœ‰æ–‡ä»¶åˆ—è¡¨ä¸æ‰€æœ‰ç›®å½•åˆ—è¡¨
+        //optsä¸ºå¯é€‰çš„é…ç½®å¯¹è±¡ï¼Œé‡Œé¢å‚æ•°ï¼š
+        //sync  è¡¨ç¤ºæ˜¯å¦åŒæ­¥ï¼Œ
+        //one   è¡¨ç¤ºæ˜¯å¦æ‰¾åˆ°ä¸€ä¸ªå°±ç»ˆäºéå†
+        //filterè¡¨ç¤ºè¿‡æ»¤å‡½æ•°ï¼Œå¦‚æœå‡½æ•°è¿”å›trueåˆ™æ”¶å½•
         walk: new function  (){
             function collect(opts, el, prop){
                 if((typeof opts.filter == "function") ? opts.filter( el ) : true){
@@ -104,7 +105,7 @@
                 }
             }
         },
-        //É¾³ıÎÄ¼ş»òÄ¿Â¼,Èç¹ûÀïÃæÓĞ¶«Î÷,Ò²Ò»²¢Çå¿Õ,ÕâÊÇÍ¬²½»¯°æ±¾
+        //åˆ é™¤æ–‡ä»¶æˆ–ç›®å½•,å¦‚æœé‡Œé¢æœ‰ä¸œè¥¿,ä¹Ÿä¸€å¹¶æ¸…ç©º,è¿™æ˜¯åŒæ­¥åŒ–ç‰ˆæœ¬
         delSync: function(p, cb){
             $.walk(p, {
                 cb: function( files, dirs ){
@@ -126,7 +127,7 @@
                 cb()
             }
         },
-        //ÉÏÃæµÄÒì²½»¯°æ±¾
+        //ä¸Šé¢çš„å¼‚æ­¥åŒ–ç‰ˆæœ¬
         del: new function( ){
             function inner(dirs, cb){
                 var dir = dirs.pop();
@@ -142,7 +143,7 @@
                 $.walk(p, function( files, dirs ){
                     var c = files.length, n = c;
                     if( n ){
-                        for(var i = 0 ; i < n ; i++){//ÏÈÉ¾³ıÎÄ¼şÔÙ´Ó×îÉî´¦ÆğÍùÍâÉ¾³ıÄ¿Â¼
+                        for(var i = 0 ; i < n ; i++){//å…ˆåˆ é™¤æ–‡ä»¶å†ä»æœ€æ·±å¤„èµ·å¾€å¤–åˆ é™¤ç›®å½•
                             fs.unlink(files[i], function(e){
                                 c--
                                 if(c == 0){
@@ -150,16 +151,16 @@
                                 }
                             })
                         }
-                    }else{//Èç¹û²»´æÔÚÎÄ¼ş
+                    }else{//å¦‚æœä¸å­˜åœ¨æ–‡ä»¶
                         inner(dirs, cb)
                     }
                 });
             }
         },
-        //´´½¨Ä¿Â¼,Èç¹ûÖ¸¶¨Â·¾¶ÖĞÓĞĞí¶àÖĞ¼äµÄÄ¿Â¼²»´æÔÚ,Ò²Ò»²¢´´½¨ËüÃÇ
+        //åˆ›å»ºç›®å½•,å¦‚æœæŒ‡å®šè·¯å¾„ä¸­æœ‰è®¸å¤šä¸­é—´çš„ç›®å½•ä¸å­˜åœ¨,ä¹Ÿä¸€å¹¶åˆ›å»ºå®ƒä»¬
         mkdirSync: function(p){
             p = path.normalize(p);
-            var array = p.split( path.sep );//´´½¨Ä¿Â¼,Ã»ÓĞÔò²¹ÉÏ
+            var array = p.split( path.sep );//åˆ›å»ºç›®å½•,æ²¡æœ‰åˆ™è¡¥ä¸Š
             for(var i = 0, cur; i < array.length; i++){
                 if(i == 0){
                     cur = array[i];
@@ -171,14 +172,14 @@
                 }catch(e){}
             }
         },
-        //ÉÏÃæµÄÒì²½»¯°æ±¾
+        //ä¸Šé¢çš„å¼‚æ­¥åŒ–ç‰ˆæœ¬
         mkdir: function(p, cb){
             p = path.normalize(p);
             var array = p.split( path.sep );
             function inner(dir, array, cb ){
                 dir  += (!dir ? array.shift() :  path.sep + array.shift());
                 fs.mkdir(dir, "0755", function(){
-                    if(array.length){//ºöÂÔEEXIST´íÎó
+                    if(array.length){//å¿½ç•¥EEXISTé”™è¯¯
                         inner(dir ,array, cb);
                     }else if(typeof cb === "function"){
                         cb();
@@ -187,7 +188,7 @@
             }
             inner("", array, cb)
         },
-        //¶ÁÈ¡Ä³¸öÎÄ¼şµÄÄÚÈİ
+        //è¯»å–æŸä¸ªæ–‡ä»¶çš„å†…å®¹
         readFile: function(){
             fs.readFile.apply(fs, arguments)
         },
@@ -195,7 +196,7 @@
             return fs.readFileSync.apply(fs, arguments)
         },
 
-        //´´½¨ÎÄ¼ş,²¢Ìí¼ÓÄÚÈİ,Èç¹ûÖ¸¶¨µÄÂ·¾¶ÖĞÀïÃæÄ³Ğ©Ä¿Â¼²»´æÔÚ,Ò²Ò»²¢´´½¨ËüÃÇ
+        //åˆ›å»ºæ–‡ä»¶,å¹¶æ·»åŠ å†…å®¹,å¦‚æœæŒ‡å®šçš„è·¯å¾„ä¸­é‡Œé¢æŸäº›ç›®å½•ä¸å­˜åœ¨,ä¹Ÿä¸€å¹¶åˆ›å»ºå®ƒä»¬
         writeFileSync: function( p , data, encoding){
             p = path.normalize(p);
             var i = p.lastIndexOf(path.sep)
@@ -205,7 +206,7 @@
             }
             fs.writeFileSync( p, data, encoding || "utf-8")
         },
-        //ÉÏÃæµÄÒì²½»¯°æ±¾
+        //ä¸Šé¢çš„å¼‚æ­¥åŒ–ç‰ˆæœ¬
         writeFile: function(p, data, cb){
             p = path.normalize(p);cb = cb || $.noop
             var i = p.lastIndexOf( path.sep )
@@ -215,7 +216,7 @@
             }
             dir ? $.mkdir(dir, fn) : fn();
         },
-        //±È½ÏÁ½¸öÎÄ¼şµÄÄÚÈİ,Èç¹ûÇ°ÕßÓëºóÕß²»Ò»ÖÂ,ÔòÓÃºóÕßµÄ¸üĞÂÇ°Õß,Ç°Á½¸ö²ÎÊıÎªËüÃÇµÄÂ·¾¶Ãû
+        //æ¯”è¾ƒä¸¤ä¸ªæ–‡ä»¶çš„å†…å®¹,å¦‚æœå‰è€…ä¸åè€…ä¸ä¸€è‡´,åˆ™ç”¨åè€…çš„æ›´æ–°å‰è€…,å‰ä¸¤ä¸ªå‚æ•°ä¸ºå®ƒä»¬çš„è·¯å¾„å
         updateFileSync: function(target_path, source_path){
             var source = fs.statSync.readFile(source_path,"utf-8");
             var update = true;
@@ -232,7 +233,7 @@
                 $.writeFileSync(target_path, source, "utf-8");
             }
         },
-         //ÉÏÃæµÄÒì²½»¯°æ±¾
+         //ä¸Šé¢çš„å¼‚æ­¥åŒ–ç‰ˆæœ¬
         updateFile: function(target_path, source_path, cb){
             var pending = 2, object = {}
             function callback(){
@@ -261,14 +262,14 @@
                 callback();
             })
         },
-        //Ä¿Â¼¶Ô¿½,¿ÉÒÔ¿ç·ÖÇø¿½±´
+        //ç›®å½•å¯¹æ‹·,å¯ä»¥è·¨åˆ†åŒºæ‹·è´
         cpdirSync: new function(old, neo, cb) {
             function inner( old, neo ) {
                 var array = fs.readdirSync(old);
                 for(var i  = 0 , n = array.length; i < n ; i++){
                     var source = array[i]
                     var target = path.join( neo, source.replace(old,"") )
-                    var stat = fs.statSync( source );//ÅĞ¶¨¾ÉµÄIO¶ÔÏóµÄÊôĞÔ£¬ÊÇÄ¿Â¼»¹ÊÇÎÄ¼ş»òÊÇ¿ì½İ·½Ê½
+                    var stat = fs.statSync( source );//åˆ¤å®šæ—§çš„IOå¯¹è±¡çš„å±æ€§ï¼Œæ˜¯ç›®å½•è¿˜æ˜¯æ–‡ä»¶æˆ–æ˜¯å¿«æ·æ–¹å¼
                     if(stat.isDirectory()){
                         inner( source, target )
                     }else if(stat.isSymbolicLink()){
@@ -278,10 +279,10 @@
                     }
                 }
             }
-            return function(old, neo, cb){//°Ñµ±Ç°Ä¿Â¼ÀïÃæµÄ¶«Î÷¿½±´µ½ĞÂÄ¿Â¼ÏÂ£¨²»´æÔÚ¾Í´´½¨£©
+            return function(old, neo, cb){//æŠŠå½“å‰ç›®å½•é‡Œé¢çš„ä¸œè¥¿æ‹·è´åˆ°æ–°ç›®å½•ä¸‹ï¼ˆä¸å­˜åœ¨å°±åˆ›å»ºï¼‰
                 old = path.resolve(process.cwd(), old);
-                neo = path.resolve(process.cwd(), neo);//ÔÊĞí¿½±´µ½ÁíÒ»¸ö·ÖÇøÖĞ
-                if(!fs.existsSync(neo)){//´´½¨ĞÂÎÄ¼ş
+                neo = path.resolve(process.cwd(), neo);//å…è®¸æ‹·è´åˆ°å¦ä¸€ä¸ªåˆ†åŒºä¸­
+                if(!fs.existsSync(neo)){//åˆ›å»ºæ–°æ–‡ä»¶
                     $.mkdirSync( neo )
                 }
                 inner(old, neo);
@@ -290,10 +291,10 @@
                 }
             }
         },
-        //ÉÏÃæµÄÒì²½»¯°æ±¾
+        //ä¸Šé¢çš„å¼‚æ­¥åŒ–ç‰ˆæœ¬
         cpdir: new function(){
             function copyFile(file, newFile, after ){
-                fs.stat(file, function(err, stat){//¿½±´¿ì½İ·½Ê½ÓëÎÄ¼ş
+                fs.stat(file, function(err, stat){//æ‹·è´å¿«æ·æ–¹å¼ä¸æ–‡ä»¶
                     if (stat.isSymbolicLink())
                         fs.readlink(file, function(err, link){
                             fs.symlink(link, newFile, after);
@@ -315,24 +316,24 @@
                     })
                 }
             }
-            return function(old, neo, cb){//°Ñµ±Ç°Ä¿Â¼ÀïÃæµÄ¶«Î÷¿½±´µ½ĞÂÄ¿Â¼ÏÂ£¨²»´æÔÚ¾Í´´½¨£©
+            return function(old, neo, cb){//æŠŠå½“å‰ç›®å½•é‡Œé¢çš„ä¸œè¥¿æ‹·è´åˆ°æ–°ç›®å½•ä¸‹ï¼ˆä¸å­˜åœ¨å°±åˆ›å»ºï¼‰
                 cb = typeof cb == "function" ? cb : $.noop
                 old = path.resolve(process.cwd(), old);
-                neo = path.resolve(process.cwd(), neo);//ÔÊĞí¿½±´µ½ÁíÒ»¸ö·ÖÇøÖĞ
+                neo = path.resolve(process.cwd(), neo);//å…è®¸æ‹·è´åˆ°å¦ä¸€ä¸ªåˆ†åŒºä¸­
                 $.mkdir(neo, function(){
                     $.walk(old, function( files, dirs ){
                         var n = dirs.length
-                        if( n ){//Èç¹û´æÔÚÄ¿Â¼
+                        if( n ){//å¦‚æœå­˜åœ¨ç›®å½•
                             for(var i  = 0 , c = n; i < n ; i++){
                                 var p = path.join(neo,  dirs[i].replace(old,""))
                                 $.mkdir(p, function(){
                                     c--
-                                    if(c == 0){//Ä¿Â¼¿½±´Íê±Ï
+                                    if(c == 0){//ç›®å½•æ‹·è´å®Œæ¯•
                                         copyFiles(files, old, neo, cb)
                                     }
                                 })
                             }
-                        }else if(files.length){//Èç¹û²»´æÔÚÄ¿Â¼µ«´æÔÚÎÄ¼ş
+                        }else if(files.length){//å¦‚æœä¸å­˜åœ¨ç›®å½•ä½†å­˜åœ¨æ–‡ä»¶
                             copyFiles(files, old, neo, cb)
                         }else{
                             cb()
