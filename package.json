@@ -1,6 +1,6 @@
 {
   "name": "mass_fs",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "height level file system",
   "main": "hfs.js",
   "scripts": {
