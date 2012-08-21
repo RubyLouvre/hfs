@@ -27,6 +27,9 @@
         return receiver;
     };
     $.mix( {
+	//添加这两个重要的创建流的方法,省得再次调用fs
+	    createWriteStream: fs.createWriteStream,
+        createReadStream: fs.createReadStream,
 	    noop: function(){},
         //遍历文件树,收集目录与文件,并包含自身
         //p为路径，
