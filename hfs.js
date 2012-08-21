@@ -10,6 +10,17 @@
 	var path = require("path")
 	var $ = $ || {}
 	console.log("已安装mass_hfs")
+	var encodings = {
+        ascii:1,
+        utf8:1,
+        utf16le:1,
+        ucs2:1,
+        base64:1,
+        binary:1,
+        hex:1,
+        append: 2,
+        sync: 3
+    }
 	$.mix = function( receiver, supplier ){
         var args = Array.apply([], arguments ),i = 1, key,//如果最后参数是布尔，判定是否覆写同名属性
         ride = typeof args[args.length - 1] == "boolean" ? args.pop() : true;
@@ -201,26 +212,45 @@
         readFileSync: function(){
             return fs.readFileSync.apply(fs, arguments)
         },
-
         //创建文件,并添加内容,如果指定的路径中里面某些目录不存在,也一并创建它们
-        writeFileSync: function( p , data, encoding){
+        //如果后两个参数中其中一个名为"append",那么它会直接在原文件上添加内容,而不是覆盖
+        //相当于appendFileSync
+        writeFileSync: function(p, data, encoding, append){
+            var args = Array.apply([],arguments)
+            args.push("sync")
+            $.writeFile.apply($, args)
+        },
+        //上面的同步化版本也是由它创建的,参数情况怕
+        //p 路径,data要添加的内容,encoding编码,append标识是什么模式,cb最后的回调
+        writeFile: function(p, data, encoding){
             p = path.normalize(p);
             var i = p.lastIndexOf(path.sep)
-            var dir = p.slice(0, i);
-            if(dir){
-                $.mkdirSync(dir, "0755" )
+            var dir = p.slice(0, i), append, sync
+            for(var j = 2; j < 5; j++){
+                var n = encodings[arguments[j]];
+                if(n == 1){
+                    encoding = arguments[j]
+                }else if(n == 2){
+                    append = true
+                }else if(n == 3){
+                    sync = true
+                }
             }
-            fs.writeFileSync( p, data, encoding || "utf-8")
-        },
-        //上面的异步化版本
-        writeFile: function(p, data, cb){
-            p = path.normalize(p);cb = cb || $.noop
-            var i = p.lastIndexOf( path.sep )
-            var dir = p.slice(0, i);
-            var fn  = function(){
-                fs.writeFile( p, data, "utf-8", cb)
+            encoding = encoding || "utf-8"
+            var method = append ?  "appendFile" : "writeFile"
+            var cb = arguments[arguments.length - 1]
+            if(sync){
+                method += "Sync"
+                if(dir){
+                    $.mkdirSync(dir, "0755" )
+                }
+                fs[method]( p, data, encoding )
+            }else{
+                var fn = function(){
+                    fs[method]( p, data,encoding, cb )
+                }
+                dir ? $.mkdir(dir, fn) : fn();
             }
-            dir ? $.mkdir(dir, fn) : fn();
         },
        //比较两个文件的内容,如果前者与后者不一致,则用后者的更新前者,前两个参数为它们的路径名
         //target_path:要更新的文件路径，
