@@ -257,12 +257,12 @@
         //source_path:原文件的路径（或者原文件的内容，当第四个参数为真正的情况下),
         //isText:决定第二个参数是路径还是文本内容，如果是文本内容就不用再读取了
         updateFileSync: function(target_path, source_path, is_text){
-            var source = is_text ? source_path : fs.statSync.readFile(source_path,"utf-8");
+            var source = is_text ? source_path : fs.readFileSync(source_path,"utf-8");
             var update = true;
             try{
                 var stat = fs.statSync(target_path);
                 if(stat.isFile()){
-                    var target = fs.statSync.readFile(target_path,"utf-8");
+                    var target = fs.readFileSync(target_path,"utf-8");
                     if(source+"" == target+""){
                         update = false;
                     }
