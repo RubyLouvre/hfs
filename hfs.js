@@ -38,10 +38,26 @@
         return receiver;
     };
     $.mix( {
-	//添加这两个重要的创建流的方法,省得再次调用fs
-	    createWriteStream: fs.createWriteStream,
-        createReadStream: fs.createReadStream,
+
 	    noop: function(){},
+        createWriteStream: fs.createWriteStream,
+        createReadStream: fs.createReadStream,
+        //读取某个文件的内容
+        readFile: function(){
+            fs.readFile.apply(fs, arguments)
+        },
+        readFileSync: function(){
+            //这里的注释与处理见https://github.com/joyent/node/blob/master/lib/module.js 459行
+            // Remove byte order marker. This catches EF BB BF (the UTF-8 BOM)
+            // because the buffer-to-string conversion in `fs.readFileSync()`
+            // translates it to FEFF, the UTF-16 BOM.
+            var content =  fs.readFileSync.apply(fs, arguments)
+            if (content.charCodeAt(0) === 0xFEFF) {
+                content = content.slice(1);
+            }
+            return content
+        },
+
         //遍历文件树,收集目录与文件,并包含自身
         //p为路径，
         //cb为最终回调，它将接受两个参数files, dirs，所有文件列表与所有目录列表
@@ -49,6 +65,7 @@
         //sync  表示是否同步，
         //one   表示是否找到一个就终于遍历
         //filter表示过滤函数，如果函数返回true则收录
+        //$.walk(url, callback, { sync: true})
         walk: new function  (){
             function collect(opts, el, prop){
                 if((typeof opts.filter == "function") ? opts.filter( el ) : true){
@@ -103,7 +120,6 @@
                     }
                 });
             }
-			//这里才是函数的主体
             return function( p, cb, opts ){
                 if(typeof cb == "object"){
                     opts = cb
@@ -122,7 +138,7 @@
                 }
             }
         },
-        //删除文件或目录,如果里面有东西,也一并清空
+        //删除文件或目录,如果里面有东西,也一并清空,这是同步化版本
         delSync: function(p, cb){
             $.walk(p, {
                 cb: function( files, dirs ){
@@ -160,14 +176,14 @@
                 $.walk(p, function( files, dirs ){
                     var c = files.length, n = c;
                     if( n ){
-                        for(var i = 0 ; i < n ; i++){//先删除文件再从最深处起往外删除目录
-                            fs.unlink(files[i], function(e){
+                        files.forEach(function(file){
+                            fs.unlink(file, function(e){//先删除文件再从最深处起往外删除目录
                                 c--
                                 if(c == 0){
                                     inner(dirs, cb)
                                 }
                             })
-                        }
+                        });
                     }else{//如果不存在文件
                         inner(dirs, cb)
                     }
@@ -205,13 +221,7 @@
             }
             inner("", array, cb)
         },
-        //读取某个文件的内容
-        readFile: function(){
-            fs.readFile.apply(fs, arguments)
-        },
-        readFileSync: function(){
-            return fs.readFileSync.apply(fs, arguments)
-        },
+
         //创建文件,并添加内容,如果指定的路径中里面某些目录不存在,也一并创建它们
         //如果后两个参数中其中一个名为"append",那么它会直接在原文件上添加内容,而不是覆盖
         //相当于appendFileSync
@@ -231,12 +241,12 @@
                 if(n == 1){
                     encoding = arguments[j]
                 }else if(n == 2){
-                    append = true
+                    append = true;
                 }else if(n == 3){
-                    sync = true
+                    sync = true;
                 }
             }
-            encoding = encoding || "utf-8"
+            encoding = encoding || "utf8"
             var method = append ?  "appendFile" : "writeFile"
             var cb = arguments[arguments.length - 1]
             if(sync){
@@ -252,24 +262,24 @@
                 dir ? $.mkdir(dir, fn) : fn();
             }
         },
-       //比较两个文件的内容,如果前者与后者不一致,则用后者的更新前者,前两个参数为它们的路径名
+        //比较两个文件的内容,如果前者与后者不一致,则用后者的更新前者,前两个参数为它们的路径名
         //target_path:要更新的文件路径，
         //source_path:原文件的路径（或者原文件的内容，当第四个参数为真正的情况下),
         //isText:决定第二个参数是路径还是文本内容，如果是文本内容就不用再读取了
         updateFileSync: function(target_path, source_path, is_text){
-            var source = is_text ? source_path : fs.readFileSync(source_path,"utf-8");
+            var source = is_text ? source_path : $.readFileSync(source_path,"utf8");
             var update = true;
             try{
                 var stat = fs.statSync(target_path);
                 if(stat.isFile()){
-                    var target = fs.readFileSync(target_path,"utf-8");
-                    if(source+"" == target+""){
+                    var target = $.readFileSync(target_path,"utf8");
+                    if(source + "" == target + ""){
                         update = false;
                     }
                 }
             }catch(e){};
             if( update && target ){
-                $.writeFileSync(target_path, source, "utf-8");
+                $.writeFileSync(target_path, source, "utf8");
             }
         },
         //上面的异步化版本，
@@ -289,7 +299,7 @@
                     }
                 }
             }
-            fs.readFile(target_path, "utf-8", function(e, data ){
+            fs.readFile(target_path, "utf8", function(e, data ){
                 pending--;
                 if(e){
                     object.err = true;//如果不存在
@@ -303,7 +313,7 @@
                 object.source = source_path + "";
                 callback();
             }else{
-                fs.readFile(source_path, "utf-8", function(e, data){
+                fs.readFile(source_path, "utf8", function(e, data){
                     pending--;
                     if(e){
                         cb(e)
@@ -328,7 +338,7 @@
                     }else if(stat.isSymbolicLink()){
                         fs.symlinkSync( fs.readlinkSync( source ),target);
                     }else {
-                        fs.writeFileSync( target, fs.readFileSync( source) );
+                        fs.writeFileSync( target, $.readFileSync( source) );
                     }
                 }
             }
@@ -370,7 +380,7 @@
                 }
             }
             return function(old, neo, cb){//把当前目录里面的东西拷贝到新目录下（不存在就创建）
-                cb = typeof cb == "function" ? cb : $.noop；
+                cb = typeof cb == "function" ? cb : $.noop
                 old = path.resolve(process.cwd(), old);
                 neo = path.resolve(process.cwd(), neo);//允许拷贝到另一个分区中
                 $.mkdir(neo, function(){
@@ -399,8 +409,10 @@
     });
 	
 	exports.$ = $;
-	    // walk, delSync, del, mkdirSync, mkdir, writeFileSync, writeFile, cpdirSync, cpdir, updateFile
+	//2012.9.8 优化readFileSync
+	
 
+    //扼要测试代码
     //var cp = function(src, dst, callback) {//将一个文件的内容拷到另一个文件中，如果原来有东西，将被清掉再拷
     //    var is = fs.createReadStream(src); //因此这方法只用于文件间的内容转移
     //    var os = fs.createWriteStream(dst);//使用之前，要自己确保这两个文件是否存在
