@@ -3,12 +3,12 @@
   "version": "0.5.0",
   "description": "height level file system",
   "main": "hfs.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/RubyLouvre/hfs.git"
+  },
+  "scripts":{
+    "test":"node ./test/test.js"
   },
   "keywords": [
     "file",
