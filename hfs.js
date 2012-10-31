@@ -58,7 +58,6 @@ $.mix({
 		}
 		return content;
 	},
-
 	//遍历文件树,收集目录与文件,并包含自身
 	//p为路径，
 	//cb为最终回调，它将接受两个参数files, dirs，所有文件列表与所有目录列表
@@ -146,7 +145,7 @@ $.mix({
 				var c = 0;
 				while ((c = files.shift())) {
 					try {
-						fs.rmdirSync(c);
+						fs.unlinkSync(c);
 					} catch(e) {}
 				}
 				while ((c = dirs.pop())) {
