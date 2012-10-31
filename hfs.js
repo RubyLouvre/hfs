@@ -410,4 +410,4 @@ $.mix({
 	}
 });
 
-exports.$ = $;
+module.exports = $;
