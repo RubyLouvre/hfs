@@ -1,26 +1,26 @@
-hfs
+﻿hfs
 ===
 
 ### height level file system
 
-�ṩ����API
+提供以下API
 
--walk �����ļ���,�ռ�Ŀ¼���ļ�,����������
+-walk 遍历文件树,收集目录与文件,并包含自身
 
--del ɾ���ļ���Ŀ¼,��������ж���,Ҳһ�����
+-del 删除文件或目录,如果里面有东西,也一并清空
 
--mkdir ����Ŀ¼,���ָ��·�����������м��Ŀ¼������,Ҳһ����������
+-mkdir 创建目录,如果指定路径中有许多中间的目录不存在,也一并创建它们
 
--readFile ��ȡĳ���ļ�������
+-readFile 读取某个文件的内容
 
--writeFile �����ļ�,����������,���ָ����·��������ĳЩĿ¼������,Ҳһ����������
+-writeFile 创建文件,并添加内容,如果指定的路径中里面某些目录不存在,也一并创建它们
 
--updateFile �Ƚ������ļ�������,���ǰ������߲�һ��,���ú��ߵĸ���ǰ��,ǰ��������Ϊ���ǵ�·����
+-updateFile 比较两个文件的内容,如果前者与后者不一致,则用后者的更新前者,前两个参数为它们的路径名
 
--cpdirSync Ŀ¼�Կ�,���Կ��������
+-cpdir 目录对拷,可以跨分区拷贝
 
-���涼�ж�Ӧ��ͬ�����汾��Դ���������ϸ��˵����򵥵�ʾ�������ǲ����ҵ���һ����Ŀnewland
+上面都有对应的同步化版本，源码里面更详细的说明与简单的示例，它是拆自我的另一个项目newland
 
-��װ $ npm install mass_hfs
+安装 $ npm install mass_hfs
 
-����ռ��hfs�ˡ���
+被人占用hfs了……
