@@ -139,6 +139,11 @@ $.mix({
 		};
 	},
 	//删除文件或目录,如果里面有东西,也一并清空,这是同步化版本
+	/*
+	参数
+	p为目录或文件
+	cn为回调函数
+	*/
 	delSync: function(p, cb) {
 		$.walk(p, {
 			cb: function(files, dirs) {
@@ -161,6 +166,11 @@ $.mix({
 		}
 	},
 	//上面的异步化版本
+	/*
+	参数
+	p为目录或文件
+	cn 可选 回调
+	*/
 	del: new function() {
 		function inner(dirs, cb) {
 			var dir = dirs.pop();
@@ -192,6 +202,10 @@ $.mix({
 		};
 	},
 	//创建目录,如果指定路径中有许多中间的目录不存在,也一并创建它们
+	/*
+	参数
+	p为一个目录的路径，以“/”隔开
+	*/
 	mkdirSync: function(p) {
 		p = path.normalize(p);
 		var array = p.split(path.sep); //创建目录,没有则补上
@@ -207,6 +221,11 @@ $.mix({
 		}
 	},
 	//上面的异步化版本
+	/*
+	参数
+	p为一个目录的路径，以“/”隔开
+	cb 可选，回调
+	*/
 	mkdir: function(p, cb) {
 		p = path.normalize(p);
 		var array = p.split(path.sep);
@@ -232,7 +251,7 @@ $.mix({
 		$.writeFile.apply($, args);
 	},
 	//上面的同步化版本也是由它创建的,参数情况怕
-	//p 路径,data要添加的内容,encoding编码,append标识是什么模式,cb最后的回调
+	//p 路径 String,data要添加的内容 String,encoding编码,append标识是什么模式,cb最后的回调
 	writeFile: function(p, data, encoding) {
 		p = path.normalize(p);
 		var i = p.lastIndexOf(path.sep);
@@ -330,6 +349,12 @@ $.mix({
 
 	},
 	//目录对拷,可以跨分区拷贝
+	cb	/*
+	参数
+	old为一个目录的路径，String,以“/”隔开
+	neo为一个目录的路径，String,以“/”隔开
+	cb 可选，回调	
+	*/
 	cpdirSync: new function(old, neo, cb) {
 		function inner(old, neo) {
 			var array = fs.readdirSync(old);
