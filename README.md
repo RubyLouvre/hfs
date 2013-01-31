@@ -3,6 +3,8 @@
 
 ### height level file system
 
+
+
 提供以下API
 
 -walk 遍历文件树,收集目录与文件,并包含自身
@@ -24,3 +26,6 @@
 安装 $ npm install mass_hfs
 
 被人占用hfs了……
+
+<h3>贡献者列表</h3>
+2群f(578734749), xiaojue 

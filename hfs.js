@@ -225,23 +225,40 @@ $.mix({
 	参数
 	p为一个目录的路径，以“/”隔开
 	cb 可选，回调
+	process.platform  'darwin', 'freebsd', 'linux', 'sunos' or 'win32'
+	Linux 不允许用户在root成mkdir 1是判断当前系统  2是判断当前目录是否存在 
      */
-    mkdir: function(p, cb) {
+   mkdir: function(p, cb) {
         p = path.normalize(p);
+        prefix = '';
+        if(p.indexOf(path.sep) === 0) {
+            prefix = path.sep;
+        }
         var array = p.split(path.sep);
+
         function inner(dir, array, cb) {
-            dir += (!dir ? array.shift() : path.sep + array.shift());
-            fs.mkdir(dir, "0755", function() {
-                if (array.length) { //忽略EEXIST错误
-                    inner(dir, array, cb);
-                } else if (typeof cb === "function") {
-                    cb();
+            dir += ((dir === path.sep || dir === '') ? array.shift() : path.sep + array.shift());
+            fs.exists(dir, function(exists) {
+                if(!exists) {
+                    fs.mkdir(dir, "0755", function() {
+                        if(array.length) { //忽略EEXIST错误
+                            inner(dir, array, cb);
+                        } else if(typeof cb === "function") {
+                            cb();
+                        }
+                    });
+                } else {
+                    if(array.length) { //忽略EEXIST错误
+                        inner(dir, array, cb);
+                    } else if(typeof cb === "function") {
+                        cb();
+                    }
                 }
             });
-        }
-        inner("", array, cb);
-    },
 
+        }
+        inner(prefix, array, cb);
+    },
     //创建文件,并添加内容,如果指定的路径中里面某些目录不存在,也一并创建它们
     //如果后两个参数中其中一个名为"append",那么它会直接在原文件上添加内容,而不是覆盖
     //相当于appendFileSync
