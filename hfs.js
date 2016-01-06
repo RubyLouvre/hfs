@@ -21,10 +21,10 @@ var encodings = {
 };
 $.mix = function(receiver, supplier) {
     var args = Array.apply([], arguments),
-    i = 1,
-    key,
+        i = 1,
+        key,
     //如果最后参数是布尔，判定是否覆写同名属性
-    ride = typeof args[args.length - 1] == "boolean" ? args.pop() : true;
+        ride = typeof args[args.length - 1] == "boolean" ? args.pop() : true;
     if (args.length === 1) { //处理$.mix(hash)的情形
         receiver = ! this.window ? this: {};
         i = 0;
@@ -140,9 +140,9 @@ $.mix({
     },
     //删除文件或目录,如果里面有东西,也一并清空,这是同步化版本
     /*
-	参数
-	p为目录或文件
-	cn为回调函数
+     参数
+     p为目录或文件
+     cn为回调函数
      */
     delSync: function(p, cb) {
         $.walk(p, {
@@ -167,9 +167,9 @@ $.mix({
     },
     //上面的异步化版本
     /*
-	参数
-	p为目录或文件
-	cn 可选 回调
+     参数
+     p为目录或文件
+     cn 可选 回调
      */
     del: new function() {
         function inner(dirs, cb) {
@@ -185,7 +185,7 @@ $.mix({
         return function(p, cb) {
             $.walk(p, function(files, dirs) {
                 var c = files.length,
-                n = c;
+                    n = c;
                 if (n) {
                     files.forEach(function(file) {
                         fs.unlink(file, function(e) { //先删除文件再从最深处起往外删除目录
@@ -203,8 +203,8 @@ $.mix({
     },
     //创建目录,如果指定路径中有许多中间的目录不存在,也一并创建它们
     /*
-	参数
-	p为一个目录的路径，以“/”隔开
+     参数
+     p为一个目录的路径，以“/”隔开
      */
     mkdirSync: function(p) {
         p = path.normalize(p);
@@ -222,13 +222,13 @@ $.mix({
     },
     //上面的异步化版本
     /*
-	参数
-	p为一个目录的路径，以“/”隔开
-	cb 可选，回调
-	process.platform  'darwin', 'freebsd', 'linux', 'sunos' or 'win32'
-	Linux 不允许用户在root成mkdir 1是判断当前系统  2是判断当前目录是否存在 
+     参数
+     p为一个目录的路径，以“/”隔开
+     cb 可选，回调
+     process.platform  'darwin', 'freebsd', 'linux', 'sunos' or 'win32'
+     Linux 不允许用户在root成mkdir 1是判断当前系统  2是判断当前目录是否存在
      */
-   mkdir: function(p, cb) {
+    mkdir: function(p, cb) {
         p = path.normalize(p);
         prefix = '';
         if(p.indexOf(path.sep) === 0) {
@@ -273,8 +273,8 @@ $.mix({
         p = path.normalize(p);
         var i = p.lastIndexOf(path.sep);
         var dir = p.slice(0, i),
-        append,
-        sync;
+            append,
+            sync;
         for (var j = 2; j < 5; j++) {
             var n = encodings[arguments[j]];
             if (n == 1) {
@@ -290,7 +290,7 @@ $.mix({
         var cb = arguments[arguments.length - 1];
         if (sync) {
             method += "Sync";
-            if (dir) {
+            if (i > 0 && dir) {
                 $.mkdirSync(dir, "0755");
             }
             fs[method](p, data, encoding);
@@ -298,7 +298,7 @@ $.mix({
             var fn = function() {
                 fs[method](p, data, encoding, cb);
             };
-            dir ? $.mkdir(dir, fn) : fn();
+            (i > 0 && dir) ? $.mkdir(dir, fn) : fn();
         }
     },
     //比较两个文件的内容,如果前者与后者不一致,则用后者的更新前者,前两个参数为它们的路径名
@@ -331,7 +331,7 @@ $.mix({
      */
     updateFile: function(target_path, source_path, cb, is_text) {
         var pending = 2,
-        object = {};
+            object = {};
         function callback() {
             if (!pending) {
                 if (object.err || object.target != object.source) {
@@ -367,17 +367,17 @@ $.mix({
     },
     //目录对拷,可以跨分区拷贝
     /*
-	参数
-	old为一个目录的路径，String,以“/”隔开
-	neo为一个目录的路径，String,以“/”隔开
-	cb 可选，回调	
+     参数
+     old为一个目录的路径，String,以“/”隔开
+     neo为一个目录的路径，String,以“/”隔开
+     cb 可选，回调
      */
     cpdirSync: new function(old, neo, cb) {
         function inner(old, neo) {
             var array = fs.readdirSync(old);
             for (var i = 0, n = array.length; i < n; i++) {
                 var source = array[i];
-				var source = path.join(old, source.replace(old, ""));
+                var source = path.join(old, source.replace(old, ""));
                 var target = path.join(neo, source.replace(old, ""));
 
                 var stat = fs.statSync(source); //判定旧的IO对象的属性，是目录还是文件或是快捷方式
